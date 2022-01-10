@@ -1,7 +1,8 @@
+
 from django.db import models
-from django.db import models
-from user.manager import CustomUserManager
-import logging
+from django.contrib.auth.models import AbstractUser
+from .manager import CustomUserManager
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
 
@@ -16,7 +17,11 @@ GENDER_CHOICE = (
 )
 
 
-class User(CustomUserManager):
+def user_profile(instance, filename):
+    return "user_profile/{}/{}".format(instance.name, filename)
+
+
+class User(AbstractUser):
     """Admin/User table
     """
     username = None
@@ -27,11 +32,12 @@ class User(CustomUserManager):
     attachment_date = models.DateField(auto_now_add=True)
     contact = models.CharField(max_length=12)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
-    city = models.CharField(max_length=50, )
-    district = models.CharField(max_length=50, blank=False, null=False)
-    address = models.CharField(max_length=15, default="", blank=True)
-
-    profile_picture = models.ImageField(upload_to='profile/', blank=True)
+    house_building_number = models.IntegerField(blank=True, null=True,
+                                                validators=[MinValueValidator(1), MaxValueValidator(6)])
+    village_city = models.CharField(max_length=50, blank=True)
+    pin_code = models.PositiveIntegerField(default=000000, validators=[MaxValueValidator(6)])
+    address = models.CharField(max_length=15, blank=False, null=False)
+    profile_picture = models.ImageField(upload_to=user_profile, blank=True)
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()
