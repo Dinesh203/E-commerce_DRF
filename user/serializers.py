@@ -11,8 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         """ User serializer Meta class """
         model = User
-        fields = ['id', 'name', 'email', 'password', 'gender', 'contact', 'date_of_birth',
-                  'profile_picture']
+        fields = ['id', 'name', 'email', 'password', 'gender', 'contact', 'date_of_birth']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -20,7 +19,6 @@ class UserSerializer(serializers.ModelSerializer):
         user = super(UserSerializer, self).create(validated_data)
         user.password = make_password(validated_data['password'])
         user.save()
-        print(user)
         return user
 
     def update(self, instance, validated_data):
@@ -31,7 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
             else:
                 setattr(instance, attr, value)
         instance.save()
-        print(instance)
         return instance
 
 

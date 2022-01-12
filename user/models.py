@@ -51,7 +51,8 @@ class User(AbstractUser):
                                           , blank=True,
                                           null=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to=user_profile, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=user_profile, blank=True, null=True,
+                                        default="media/user_profile/default_image" )
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()

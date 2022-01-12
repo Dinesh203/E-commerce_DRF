@@ -1,5 +1,6 @@
+
 from django.http import HttpResponse
-from django.shortcuts import render
+from rest_framework.utils import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -12,7 +13,6 @@ from .serializers import UserSerializer
 class AdminView(APIView):
     """ Admin can get details, add new user, update detail, and delete
     users """
-    # permission_classes = ()
 
     def get(self, request, pk=None):
         if pk:
@@ -27,18 +27,11 @@ class AdminView(APIView):
 
     def post(self, request):
         print(request.data)
-        if request.data['profile_picture'] == 'null' or '':
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            serializer = UserSerializer(data=request.data, files=request.FILES)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request, pk=None):
         if pk:
@@ -64,3 +57,13 @@ class AdminView(APIView):
             return Response({"status": "success", "data": "Item Deleted"})
         else:
             return Response({'error': 'user id not found'})
+
+
+class UploadProfile(APIView):
+    """ user profile upload """
+    def post(self, request):
+        # print(request.user.profile_picture)
+        file = request.data['profile_picture']
+        image = User.objects.create(profile_picture=file)
+        print(image)
+        return HttpResponse(json.dumps({'message': "Uploaded"}), status=200)
