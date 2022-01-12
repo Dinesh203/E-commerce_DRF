@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import CustomUserManager
+from .choice import STATE_CHOICE
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
@@ -25,6 +26,7 @@ class Address(models.Model):
     pin_code = models.PositiveIntegerField(blank=True, null=True,
                                            validators=[MaxValueValidator(999999),
                                                        MinValueValidator(1)])
+    state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
     address = models.CharField(max_length=15, blank=False, null=False)
 
     def __str__(self):
@@ -52,7 +54,9 @@ class User(AbstractUser):
                                           null=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
     profile_picture = models.ImageField(upload_to=user_profile, blank=True, null=True,
-                                        default="media/user_profile/default_image" )
+                                        default='media/user_profile/default_image/default-user-photo-79.jpg')
+    # media / user_profile / default_image / default - user - photo - 79.j
+    # pg
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()

@@ -22,6 +22,8 @@ class AdminView(APIView):
             serializer = UserSerializer(User.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         user = User.objects.all()
+        for i in user:
+            print("profile_pic", i.profile_picture)
         serializer = UserSerializer(user, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
@@ -61,9 +63,23 @@ class AdminView(APIView):
 
 class UploadProfile(APIView):
     """ user profile upload """
-    def post(self, request):
-        # print(request.user.profile_picture)
-        file = request.data['profile_picture']
-        image = User.objects.create(profile_picture=file)
-        print(image)
-        return HttpResponse(json.dumps({'message': "Uploaded"}), status=200)
+    def patch(self, request, pk=None):
+        if pk:
+            try:
+                file = request.data['profile_picture']
+                serializer_data = UserSerializer(User.objects.get(id=pk), data=file, partial=True)
+            except Exception as e:
+                return HttpResponse(e)
+            print(serializer_data)
+            if serializer_data.is_valid():
+                serializer_data.save()
+                return Response({"status": "success", "data": serializer_data.data})
+            else:
+                return Response({"status": "error", "data": serializer_data.errors})
+        else:
+            return Response({"status": "invalid detail or attribute"})
+    # # print(request.user.profile_picture)
+    # file = request.data['profile_picture']
+    # image = User.objects.create(profile_picture=file)
+    # print(image)
+    # return HttpResponse(json.dumps({'message': "Uploaded"}), status=200)
