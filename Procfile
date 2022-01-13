@@ -1,1 +1,4 @@
-web : gunicorn --port=8000 E_mart.wsgi --log-file -
+web : gunicorn E_mart.wsgi
+release: python manage.py makemigrations --noinput
+release: python manage.py collectstatic --noinput
+release: python manage.py migrate --noinput
