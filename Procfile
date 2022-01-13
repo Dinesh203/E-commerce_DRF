@@ -1,0 +1,1 @@
+web : gunicorn --port=8000 E_mart.wsgi --log-file -
