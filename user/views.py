@@ -22,8 +22,6 @@ class AdminView(APIView):
             serializer = UserSerializer(User.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         user = User.objects.all()
-        for i in user:
-            print("profile_pic", i.profile_picture)
         serializer = UserSerializer(user, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
