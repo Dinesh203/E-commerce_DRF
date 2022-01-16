@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django_countries.fields import CountryField
 from .manager import CustomUserManager
 from .choice import STATE_CHOICE
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -27,6 +28,7 @@ class Address(models.Model):
                                            validators=[MaxValueValidator(999999),
                                                        MinValueValidator(1)])
     state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
+    country = CountryField(multiple=False, default="", null=True, blank=True)
     address = models.CharField(max_length=15, blank=False, null=False)
 
     def __str__(self):
