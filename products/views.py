@@ -1,6 +1,6 @@
 
 from .models import Products, Category, SubCategory, Seller, Brand
-from .serializers import ProductsSerializer
+from .serializers import ProductsSerializer, CategorySerializer, SubCategorySerializer
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,13 +14,13 @@ class ProductDetail(APIView):
     """product detail"""
     def get(self, request, pk=None):
         if pk:
-            user = Products.objects.filter(pk=pk)
-            if not user:
+            product = Products.objects.filter(pk=pk)
+            if not product:
                 return Response({"status": "invalid user or id"})
             serializer = ProductsSerializer(Products.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
-        user = Products.objects.all()
-        serializer = ProductsSerializer(user, many=True)
+        product = Products.objects.all()
+        serializer = ProductsSerializer(product, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
     # def post(self, request):

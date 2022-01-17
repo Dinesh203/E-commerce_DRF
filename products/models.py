@@ -60,7 +60,7 @@ def category_image(instance, filename):
 class Category(models.Model):
     """ Product sub category"""
     name = models.CharField(max_length=200)
-    icon = models.ImageField(upload_to='category_image/', blank=True)
+    icon = models.ImageField(upload_to='category_image/', blank=True, null=True)
     sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
