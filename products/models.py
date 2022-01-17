@@ -15,6 +15,7 @@ class Seller(models.Model):
 
 
 def product_images(instance, filename):
+    """ make product image path"""
     return "product/images/{}/{}".format(instance.title, filename)
 
 
