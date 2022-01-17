@@ -1,2 +1,2 @@
-web : gunicorn E_mart.wsgi --log-file -
+web: gunicorn E_mart.wsgi --log-file -
 
