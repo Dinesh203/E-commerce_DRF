@@ -46,7 +46,7 @@ class SubCategory(models.Model):
 
 class Brand(models.Model):
     """ Product categories by brands """
-    brand_name = models.CharField(max_length=100, blank=False, default="")
+    brand_name = models.CharField(max_length=100, blank=False, null=True)
     product = models.ForeignKey(Products, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):

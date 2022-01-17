@@ -7,7 +7,37 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from .models import User
 from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
+
+
+class UserView(APIView):
+    """ User can access self detail"""
+    def get(self, request):
+        if request.user:
+            user_email = request.user
+            user = User.objects.get(email=user_email)
+            serializer = UserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"status": "user not found please Signup first"},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateUserDetail(APIView):
+    """ Update User Details"""
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request):
+        try:
+            serializer_data = UserSerializer(User.objects.get(email=request.user), data=request.data, partial=True)
+        except Exception as e:
+            return HttpResponse(e)
+        print(serializer_data)
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response({"status": "success", "data": serializer_data.data})
+        else:
+            return Response({"status": "error", "data": serializer_data.errors})
 
 
 class AdminView(APIView):

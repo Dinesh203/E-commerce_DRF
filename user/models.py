@@ -19,22 +19,6 @@ GENDER_CHOICE = (
 )
 
 
-class Address(models.Model):
-    """User's Address detail table"""
-    house_building_number = models.PositiveIntegerField(blank=True, null=True,
-                                                        validators=[MaxValueValidator(99999)])
-    village_city = models.CharField(max_length=50, blank=True)
-    pin_code = models.PositiveIntegerField(blank=True, null=True,
-                                           validators=[MaxValueValidator(999999),
-                                                       MinValueValidator(1)])
-    state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
-    country = CountryField(multiple=False, default="", null=True, blank=True)
-    address = models.CharField(max_length=15, blank=False, null=False)
-
-    def __str__(self):
-        return self.address
-
-
 def user_profile(instance, filename):
     """  create media file folder with name create"""
     print("filename: ", filename)
@@ -50,15 +34,14 @@ class User(AbstractUser):
     email = models.EmailField(max_length=200, unique=True)
     gender = models.CharField(max_length=200, choices=GENDER_CHOICE, blank=True)
     attachment_date = models.DateField(auto_now_add=True)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
-    contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999), MinValueValidator(9999999)]
-                                          , blank=True,
-                                          null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    state = models.CharField(max_length=50, blank=True, null=True)
+    address = models.CharField(max_length=150, blank=True, null=True)
+    contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999), MinValueValidator(100000000)]
+                                          , blank=True, null=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
     profile_picture = models.ImageField(upload_to=user_profile, blank=True, null=True,
                                         default='media/user_profile/default_image/default-user-photo-79.jpg')
-    # media / user_profile / default_image / default - user - photo - 79.j
-    # pg
 
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()
@@ -66,3 +49,19 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Address(models.Model):
+    """User's Address detail table"""
+    house_building_number = models.PositiveIntegerField(blank=True, null=True,
+                                                        validators=[MaxValueValidator(99999)])
+    village_city = models.CharField(max_length=50, blank=True)
+    pin_code = models.PositiveIntegerField(blank=True, null=True,
+                                           validators=[MaxValueValidator(999999),
+                                                       MinValueValidator(1)])
+    state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
+    country = CountryField(multiple=False, default="", null=True, blank=True)
+    address = models.CharField(max_length=15, blank=False, null=False)
+
+    def __str__(self):
+        return self.address
