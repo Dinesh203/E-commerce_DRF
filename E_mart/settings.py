@@ -86,10 +86,10 @@ WSGI_APPLICATION = 'E_mart.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'dineshdb',
-        'PASSWORD': 'dinesh123',
-        'HOST': 'localhost',
+        'NAME': 'd4m2am35ot51vp',
+        'USER': 'mghsvhgsorarid',
+        'PASSWORD': 'edda0498e66339bad5dfe35943090a412b227ddfeec4077e171eb5f4996164d7',
+        'HOST': 'ec2-3-225-41-234.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
