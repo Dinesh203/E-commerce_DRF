@@ -1,5 +1,5 @@
 
-from .models import Products, Category, SubCategory, Seller, Brand
+from .models import Products, Category, SubCategory, Seller
 from .serializers import ProductsSerializer, CategorySerializer, SubCategorySerializer
 from django.http import HttpResponse
 from rest_framework.views import APIView
@@ -22,6 +22,21 @@ class ProductDetail(APIView):
         product = Products.objects.all()
         serializer = ProductsSerializer(product, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+
+
+class CategoryView(APIView):
+    """ Category view """
+    def get(self, request, pk=None):
+        if pk:
+            category = Category.objects.get(pk=pk)
+            if not category:
+                return Response({"status": "category not found"},
+                                status=status.HTTP_404_NOT_FOUND)
+            serializer = CategorySerializer(category)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        cat_serializer = CategorySerializer(Category.objects.all(), many=True)
+        return Response(cat_serializer.data, status=status.HTTP_200_OK)
+
 
     # def post(self, request):
     #     print(request.data)

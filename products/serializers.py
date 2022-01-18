@@ -1,11 +1,12 @@
 
-from .models import User, Products, Category, SubCategory, Brand, Seller, CollectionOfCategories
+from .models import User, Products, Category, SubCategory, Seller, CollectionOfCategories
 from rest_framework import serializers
 from django_countries.serializer_fields import CountryField
 
 
 class ProductsSerializer(serializers.ModelSerializer):
     """ Product serializer """
+    seller = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         """ product serializer Meta class """
@@ -15,11 +16,12 @@ class ProductsSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     """ Category serializer """
+    sub_category = serializers.StringRelatedField()
 
     class Meta:
         """ Category serializer Meta class """
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name', 'icon', 'created']
 
 
 class SubCategorySerializer(serializers.ModelSerializer):

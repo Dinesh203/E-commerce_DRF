@@ -1,9 +1,20 @@
 from django.db import models
 from user.models import User
+
 # Create your models here.
+
+COLOR_CHOICES = (
+    ('RED', 'red'),
+    ('WHITE', 'white'),
+    ('SKY_BLUE', 'sky_blue'),
+    ('BLACK', 'black'),
+    ('SILVER', 'SILVER'),
+    ('GREEN', 'green')
+)
 
 
 class Seller(models.Model):
+    """ seller detail table """
     seller_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='product_seller_name')
     business_name = models.CharField(max_length=200, blank=False, null=False)
     about_business = models.TextField(max_length=500, blank=False)
@@ -11,12 +22,40 @@ class Seller(models.Model):
     active_status = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.seller_name
+        return self.seller_name.name
+
+
+class Feature(models.Model):
+    """ make product feature """
+    product_name = models.CharField(max_length=100, null=True, blank=True)
+    feature1 = models.CharField(max_length=200, null=True, blank=True)
+    feature2 = models.CharField(max_length=200, null=True, blank=True)
+    feature3 = models.CharField(max_length=200, null=True, blank=True)
+    feature4 = models.CharField(max_length=200, null=True, blank=True)
+    brand = models.CharField(max_length=200, blank=True, null=True)
+    specification = models.CharField(max_length=500, blank=True, null=True)
+    color = models.CharField(choices=COLOR_CHOICES, max_length=50, blank=True, null=True)
+    size = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return self.product_name
+
+
+class AvailableOffer(models.Model):
+    """ Available offer tabel"""
+    product_name = models.CharField(max_length=100, blank=True, null=True)
+    offer1 = models.CharField(max_length=100, blank=True, null=True)
+    offer2 = models.CharField(max_length=100, blank=True, null=True)
+    offer3 = models.CharField(max_length=100, blank=True, null=True)
+    offer4 = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.product_name
 
 
 def product_images(instance, filename):
     """ make product image path"""
-    return "product/images/{}/{}".format(instance.title, filename)
+    return "media/product/images/{}/{}".format(instance.title, filename)
 
 
 class Products(models.Model):
@@ -26,7 +65,9 @@ class Products(models.Model):
     image = models.ImageField(upload_to=product_images, blank=True, null=True)
     seller = models.ForeignKey(User, related_name="user_product", on_delete=models.CASCADE,
                                null=True, blank=True)
-    feature = models.CharField(max_length=1000, blank=True, null=True)
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE, blank=True, null=True)
+    available_offer = models.ForeignKey(AvailableOffer, on_delete=models.CASCADE,
+                                        blank=True, null=True)
     description = models.TextField(null=True, blank=True)
     quantity = models.IntegerField(default=1)
     is_deleted = models.BooleanField(default=False)
@@ -44,16 +85,8 @@ class SubCategory(models.Model):
         return self.sub_category_name
 
 
-class Brand(models.Model):
-    """ Product categories by brands """
-    brand_name = models.CharField(max_length=100, blank=False, null=True)
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, blank=False, null=False)
-
-    def __str__(self):
-        return self.brand_name
-
-
 def category_image(instance, filename):
+    """ make category image path """
     return "category/icons/{}/{}".format(instance.name, filename)
 
 
@@ -76,3 +109,9 @@ class CollectionOfCategories(models.Model):
     def __str__(self):
         return self.collection_name
 
+# class Brand(models.Model):
+#     """ Product categories by brands """
+#     brand_name = models.CharField(max_length=100, blank=False, null=True)
+#
+#     def __str__(self):
+#         return self.brand_name

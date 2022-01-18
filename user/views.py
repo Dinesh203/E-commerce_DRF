@@ -51,7 +51,7 @@ class AdminView(APIView):
                 return Response({"status": "invalid user or id"})
             serializer = UserSerializer(User.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
-        user = User.objects.all()
+        user = User.objects.all().order_by('id')
         serializer = UserSerializer(user, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
