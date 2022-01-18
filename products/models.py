@@ -79,7 +79,7 @@ class Products(models.Model):
 class SubCategory(models.Model):
     """ Product sub category """
     sub_category_name = models.CharField(max_length=100, blank=False, default="")
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, blank=False, null=False)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.sub_category_name

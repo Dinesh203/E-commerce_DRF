@@ -4,14 +4,24 @@ from rest_framework import serializers
 from django_countries.serializer_fields import CountryField
 
 
+class FeatureSerializer(serializers.ModelSerializer):
+    """feature model serializer class"""
+    class Meta:
+        """ product serializer Meta class """
+        model = Products
+        fields = ['id', 'product_name', 'feature1', 'feature2', 'feature3', 'feature4', 'brand', 'specification',
+                  'color', 'size']
+
+
 class ProductsSerializer(serializers.ModelSerializer):
     """ Product serializer """
     seller = serializers.StringRelatedField(read_only=True)
+    # feature = serializers.StringRelatedField()
 
     class Meta:
         """ product serializer Meta class """
         model = Products
-        fields = '__all__'
+        fields = ['id', 'title', 'image', 'seller', 'price', 'feature', 'available_offer', 'description']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -21,7 +31,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         """ Category serializer Meta class """
         model = Category
-        fields = ['id', 'name', 'icon', 'created']
+        fields = ['id', 'name', 'icon', 'sub_category']
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
