@@ -53,9 +53,18 @@ class AvailableOffer(models.Model):
         return self.product_name
 
 
+class SubCategory(models.Model):
+    """ Product sub category """
+    sub_category_name = models.CharField(max_length=100, blank=False, null=False)
+    category_label = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.sub_category_name
+
+
 def product_images(instance, filename):
     """ make product image path"""
-    return "media/product/images/{}/{}".format(instance.title, filename)
+    return "/product/{}/{}".format(instance.title, filename)
 
 
 class Products(models.Model):
@@ -69,25 +78,12 @@ class Products(models.Model):
     available_offer = models.ForeignKey(AvailableOffer, on_delete=models.CASCADE,
                                         blank=True, null=True)
     description = models.TextField(null=True, blank=True)
+    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.IntegerField(default=1)
     is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
-
-
-class SubCategory(models.Model):
-    """ Product sub category """
-    sub_category_name = models.CharField(max_length=100, blank=False, default="")
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, blank=True, null=True)
-
-    def __str__(self):
-        return self.sub_category_name
-
-
-def category_image(instance, filename):
-    """ make category image path """
-    return "category/icons/{}/{}".format(instance.name, filename)
 
 
 class Category(models.Model):

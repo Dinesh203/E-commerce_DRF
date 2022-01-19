@@ -19,7 +19,7 @@ GENDER_CHOICE = (
 def user_profile(instance, filename):
     """  create media file folder with name create"""
     print("filename: ", filename)
-    return "user_profile/{}/{}".format(instance.name, filename)
+    return "/user_profile/{}/{}".format(instance.name, filename)
 
 
 class User(AbstractUser):
@@ -36,7 +36,7 @@ class User(AbstractUser):
     address = models.CharField(max_length=150, blank=True, null=True)
     contact = PhoneNumberField(unique=True, null=True, blank=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to=user_profile, blank=True, null=True,
+    profile_picture = models.ImageField(upload_to='user_profile', blank=True, null=True,
                                         default='media/user_profile/default_image/default-user-photo-79.jpg')
 
     USERNAME_FIELD = 'email'

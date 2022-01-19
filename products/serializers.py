@@ -41,3 +41,12 @@ class SubCategorySerializer(serializers.ModelSerializer):
         """ SubCategory serializer Meta class """
         model = SubCategory
         fields = '__all__'
+
+
+class CollectionOfCategoriesSerializer(serializers.ModelSerializer):
+    """ CollectionOfCategories serializer """
+
+    class Meta:
+        """ CollectionOfCategories serializer Meta class """
+        model = CollectionOfCategories
+        fields = '__all__'

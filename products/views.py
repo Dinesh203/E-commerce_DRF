@@ -19,7 +19,7 @@ class ProductDetail(APIView):
                 return Response({"status": "invalid user or id"})
             serializer = ProductsSerializer(Products.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
-        product = Products.objects.all()
+        product = Products.objects.all().order_by('id')
         serializer = ProductsSerializer(product, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
@@ -34,7 +34,22 @@ class CategoryView(APIView):
                                 status=status.HTTP_404_NOT_FOUND)
             serializer = CategorySerializer(category)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        cat_serializer = CategorySerializer(Category.objects.all(), many=True)
+        cat_serializer = CategorySerializer(Category.objects.all().order_by('id'), many=True)
+        return Response(cat_serializer.data, status=status.HTTP_200_OK)
+
+
+class SubCategoryView(APIView):
+    """ Sub categories view """
+
+    def get(self, request, pk=None):
+        if pk:
+            sub_category = SubCategory.objects.get(pk=pk)
+            if not sub_category:
+                return Response({"status": "category not found"},
+                                status=status.HTTP_404_NOT_FOUND)
+            serializer = SubCategorySerializer(sub_category)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        cat_serializer = SubCategorySerializer(SubCategory.objects.all().order_by('id'), many=True)
         return Response(cat_serializer.data, status=status.HTTP_200_OK)
 
 

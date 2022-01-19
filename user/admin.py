@@ -3,5 +3,10 @@ from .models import User, Address
 # Register your models here.
 
 
-admin.site.register(User)
+class UserAdmin(admin.ModelAdmin):
+    """User admin panel display fields"""
+    list_display = ['id', 'email', 'name', 'profile_picture']
+
+
+admin.site.register(User, UserAdmin)
 admin.site.register(Address)
