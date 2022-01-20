@@ -1,8 +1,11 @@
 from django.contrib import admin
-from .models import Products, Category, SubCategory, Seller, CollectionOfCategories, Feature, AvailableOffer
+from django.utils.html import format_html
+
+from .models import Products, Category, SubCategory, Seller, Collections, Feature, AvailableOffer
+
 # Register your models here
 
-admin.site.register(CollectionOfCategories)
+admin.site.register(Collections)
 admin.site.register(SubCategory)
 admin.site.register(Seller)
 admin.site.register(Feature)
@@ -11,7 +14,12 @@ admin.site.register(AvailableOffer)
 
 class CategoryAdmin(admin.ModelAdmin):
     """ product categories interface configure"""
-    list_display = ['id', 'name', 'icon', 'sub_category']
+    list_display = ['id', 'name', 'photo_pre']
+    readonly_fields = ('photo_pre',)
+
+    def photo_pre(self, obj):
+        """ image view in admin panel"""
+        return format_html(f'<img style="height:100px;" src="/media/{obj.icon}"/>')
 
 
 admin.site.register(Category, CategoryAdmin)
@@ -19,8 +27,12 @@ admin.site.register(Category, CategoryAdmin)
 
 class ProductAdmin(admin.ModelAdmin):
     """ product admin interface configure"""
-    list_display = ['id', 'title', 'price']
+    list_display = ['id', 'title', 'price', 'photo_pre']
+    readonly_fields = ('photo_pre',)
+
+    def photo_pre(self, obj):
+        """ image view in admin panel"""
+        return format_html(f'<img style="height:100px;" src="/media/{obj.image}"/>')
 
 
 admin.site.register(Products, ProductAdmin)
-

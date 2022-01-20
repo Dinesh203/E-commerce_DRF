@@ -53,6 +53,25 @@ class AvailableOffer(models.Model):
         return self.product_name
 
 
+class Collections(models.Model):
+    """collection of categories """
+    collection_name = models.CharField(max_length=100, blank=True, null=True)
+    image = models.ImageField(upload_to="collection/", blank=True, null=True)
+
+    def __str__(self):
+        return self.collection_name
+
+
+class Category(models.Model):
+    """ Product category"""
+    name = models.CharField(max_length=200)
+    icon = models.ImageField(upload_to='category_image/', blank=True, null=True)
+    collections = models.ForeignKey(Collections, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 class SubCategory(models.Model):
     """ Product sub category """
     sub_category_name = models.CharField(max_length=100, blank=False, null=False)
@@ -64,7 +83,7 @@ class SubCategory(models.Model):
 
 def product_images(instance, filename):
     """ make product image path"""
-    return "/product/{}/{}".format(instance.title, filename)
+    return "product/{}/{}".format(instance.title, filename)
 
 
 class Products(models.Model):
@@ -86,28 +105,16 @@ class Products(models.Model):
         return self.title
 
 
-class Category(models.Model):
-    """ Product sub category"""
-    name = models.CharField(max_length=200)
-    icon = models.ImageField(upload_to='category_image/', blank=True, null=True)
-    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-
-class CollectionOfCategories(models.Model):
-    """collection of categories """
-    collection_name = models.CharField(max_length=100, blank=False, default="")
-    categories_name = models.ForeignKey(Category, on_delete=models.CASCADE, blank=False, null=False)
-
-    def __str__(self):
-        return self.collection_name
-
 # class Brand(models.Model):
 #     """ Product categories by brands """
 #     brand_name = models.CharField(max_length=100, blank=False, null=True)
 #
 #     def __str__(self):
 #         return self.brand_name
+
+# def discount_price(self, instance, discount):
+#     discount_price = instance.price*discount/100
+#     return discount_price
+# discount_rate = models.IntegerField(default=0, blank=True, null=True)
+#     discount_price = models.DecimalField(default=discount_price, blank=True, null=True)
+

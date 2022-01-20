@@ -1,17 +1,34 @@
 
-from .models import Products, Category, SubCategory, Seller
-from .serializers import ProductsSerializer, CategorySerializer, SubCategorySerializer
-from django.http import HttpResponse
+from .models import Products, Category, SubCategory, Collections
+from .serializers import ProductsSerializer, CategorySerializer, SubCategorySerializer, CollectionSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 from rest_framework import status
+
+
 # from .serializers import UserSerializer
 # Create your views here.
 
 
+class CollectionsView(APIView):
+    """list top deal products"""
+
+    def get(self, request, pk=None):
+        if pk:
+            collection = Collections.objects.get(pk=pk)
+            print(list(collection))
+            if not collection:
+                return Response({"status": "category not found"},
+                                status=status.HTTP_404_NOT_FOUND)
+            serializer = CollectionSerializer(collection)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        collect_serializer = CollectionSerializer(Collections.objects.all(), many=True)
+        return Response(collect_serializer.data, status=status.HTTP_200_OK)
+
+
 class ProductDetail(APIView):
     """product detail"""
+
     def get(self, request, pk=None):
         if pk:
             product = Products.objects.filter(pk=pk)
@@ -26,6 +43,7 @@ class ProductDetail(APIView):
 
 class CategoryView(APIView):
     """ Category view """
+
     def get(self, request, pk=None):
         if pk:
             category = Category.objects.get(pk=pk)
@@ -43,15 +61,21 @@ class SubCategoryView(APIView):
 
     def get(self, request, pk=None):
         if pk:
-            sub_category = SubCategory.objects.get(pk=pk)
-            if not sub_category:
-                return Response({"status": "category not found"},
+            products = Products.objects.filter(sub_category_id=pk)
+            if not products:
+                return Response({"status": "product not available"},
                                 status=status.HTTP_404_NOT_FOUND)
-            serializer = SubCategorySerializer(sub_category)
+            serializer = ProductsSerializer(products, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        cat_serializer = SubCategorySerializer(SubCategory.objects.all().order_by('id'), many=True)
-        return Response(cat_serializer.data, status=status.HTTP_200_OK)
 
+        top_deal = Products.objects.order_by("?")[0:10]
+        product_serializer = ProductsSerializer(top_deal, many=True)
+
+        cat_serializer = SubCategorySerializer(SubCategory.objects.all().order_by('id'), many=True)
+        context = {'product_serializer': product_serializer.data,
+                   'cat_serializer': cat_serializer.data
+                   }
+        return Response(context, status=status.HTTP_200_OK)
 
     # def post(self, request):
     #     print(request.data)
