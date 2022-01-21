@@ -21,8 +21,10 @@ class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         """ product serializer Meta class """
         model = Products
-        fields = ['id', 'title', 'image', 'seller', 'price', 'feature', 'available_offer', 'description']
-        depth = 1
+        fields = ['id', 'title', 'image', 'seller', 'actual_price',
+                  'discount_price', 'feature', 'available_offer', 'description']
+        # depth = 1
+
 
 class CategorySerializer(serializers.ModelSerializer):
     """ Category serializer """

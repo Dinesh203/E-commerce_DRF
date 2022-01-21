@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import User
 from .serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -32,6 +33,7 @@ class UserView(APIView):
 class UpdateUserDetail(APIView):
     """ Update User Details"""
     permission_classes = (IsAuthenticated,)
+    parser_classes = (FormParser, MultiPartParser)
 
     def patch(self, request):
         try:

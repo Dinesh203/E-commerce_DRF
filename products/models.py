@@ -63,7 +63,7 @@ class Collections(models.Model):
 
 
 class Category(models.Model):
-    """ Product category"""
+    """ Product category """
     name = models.CharField(max_length=200)
     icon = models.ImageField(upload_to='category_image/', blank=True, null=True)
     collections = models.ForeignKey(Collections, on_delete=models.CASCADE, blank=True, null=True)
@@ -89,7 +89,9 @@ def product_images(instance, filename):
 class Products(models.Model):
     """ Products details """
     title = models.CharField(max_length=100, blank=False, null=False)
-    price = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True)
+    actual_price = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True)
+    discount_price = models.DecimalField(decimal_places=2, blank=True,
+                                         null=True, max_digits=10)
     image = models.ImageField(upload_to=product_images, blank=True, null=True)
     seller = models.ForeignKey(User, related_name="user_product", on_delete=models.CASCADE,
                                null=True, blank=True)
@@ -112,9 +114,12 @@ class Products(models.Model):
 #     def __str__(self):
 #         return self.brand_name
 
-# def discount_price(self, instance, discount):
-#     discount_price = instance.price*discount/100
-#     return discount_price
-# discount_rate = models.IntegerField(default=0, blank=True, null=True)
-#     discount_price = models.DecimalField(default=discount_price, blank=True, null=True)
-
+# discount_percentage = models.IntegerField(default=0, blank=True, null=True)
+# def discount_calculate(actual_price, discount_percentage):
+#     """ final product price calculation """
+#     discount_value = actual_price - ((actual_price * discount_percentage) / 100)
+#     return actual_price - discount_value
+# def save(self, *args, **kwargs):
+#     self.discount_price = discount_calculate(self.actual_price, self.discount_percentage)
+#     super(Products, self).save(*args, **kwargs)
+#

@@ -27,8 +27,9 @@ admin.site.register(Category, CategoryAdmin)
 
 class ProductAdmin(admin.ModelAdmin):
     """ product admin interface configure"""
-    list_display = ['id', 'title', 'price', 'photo_pre']
+    list_display = ['id', 'title', 'actual_price', 'discount_price', 'photo_pre']
     readonly_fields = ('photo_pre',)
+    # fields = ('title', 'photo_pre', 'discount_price')
 
     def photo_pre(self, obj):
         """ image view in admin panel"""
