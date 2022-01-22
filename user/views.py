@@ -14,8 +14,12 @@ class UserView(APIView):
     """ User can access self detail"""
     def get(self, request):
         if request.user:
+            print("user: ", request.user)
             user_email = request.user
-            user = User.objects.get(email=user_email)
+            try:
+                user = User.objects.get(email=user_email)
+            except Exception as e:
+                return Response({'error': e}, status=status.HTTP_404_NOT_FOUND)
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"status": "user not found please Signup first"},
@@ -33,7 +37,7 @@ class UserView(APIView):
 class UpdateUserDetail(APIView):
     """ Update User Details"""
     permission_classes = (IsAuthenticated,)
-    parser_classes = (FormParser, MultiPartParser)
+    # parser_classes = (FormParser, MultiPartParser)
 
     def patch(self, request):
         try:

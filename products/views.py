@@ -1,7 +1,8 @@
-
-from .models import Products, Category, SubCategory, Collections
-from .serializers import ProductsSerializer, CategorySerializer, SubCategorySerializer, CollectionSerializer
+from .models import Products, Category, SubCategory, Collections, Cart
+from .serializers import ProductsSerializer, CategorySerializer, \
+    SubCategorySerializer, CollectionSerializer, CartSerializer
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -22,8 +23,13 @@ class CollectionsView(APIView):
                                 status=status.HTTP_404_NOT_FOUND)
             serializer = CollectionSerializer(collection)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        top_deal = Products.objects.filter().order_by("?")[0:10]
+        product_serializer = ProductsSerializer(top_deal, many=True)
+
         collect_serializer = CollectionSerializer(Collections.objects.all(), many=True)
-        return Response(collect_serializer.data, status=status.HTTP_200_OK)
+        context = {'collections': collect_serializer.data,
+                   'products': product_serializer.data}
+        return Response(context, status=status.HTTP_200_OK)
 
 
 class ProductDetail(APIView):
@@ -83,6 +89,28 @@ class SubCategoryView(APIView):
                    'categories': cat_serializer.data
                    }
         return Response(context, status=status.HTTP_200_OK)
+
+
+class CartView(APIView):
+    """add item to cart"""
+    serializer_class = CartSerializer
+
+    def get(self, request, pk=None):
+        """cart item get detail"""
+        print(request.auth)
+        print("absctrac", request.user.is_authenticated)
+        print(request.user.is_authenticated)
+        if request.user.is_authenticated:
+            print(request.user.is_authenticated)
+            cart = Cart.objects.filter(user__email=request.user)
+            cart_serializer = CartSerializer(cart, many=True)
+
+    # def post(self, request, pk=None):
+    #     """add item in cart"""
+    #     product = Products.objects.get(pk=pk)
+    #     print(product.)
+    #     serialiser = CartSerializer('User')
+
 
     # def post(self, request):
     #     print(request.data)

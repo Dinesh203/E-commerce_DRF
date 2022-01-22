@@ -1,5 +1,5 @@
 
-from .models import User, Products, Category, SubCategory, Seller, Collections
+from .models import User, Products, Category, SubCategory, Collections, Cart
 from rest_framework import serializers
 from django_countries.serializer_fields import CountryField
 
@@ -52,3 +52,15 @@ class CollectionSerializer(serializers.ModelSerializer):
         """ CollectionOfCategories serializer Meta class """
         model = Collections
         fields = '__all__'
+
+
+class CartSerializer(serializers.ModelSerializer):
+    """ cart serializer """
+    user = serializers.StringRelatedField()
+    product = serializers.StringRelatedField()
+
+    class Meta:
+        """ cart serializer Meta class """
+        model = Cart
+        fields = ['id', 'user', 'product', 'total_amount', 'quantity', 'added_date']
+

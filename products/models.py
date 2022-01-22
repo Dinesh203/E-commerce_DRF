@@ -107,6 +107,16 @@ class Products(models.Model):
         return self.title
 
 
+class Cart(models.Model):
+    """ add to item in cart """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_cart')
+    products = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='cart_product')
+    quantity = models.PositiveIntegerField(default=1)
+    total_amount = models.PositiveIntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return str(self.products)
+
 # class Brand(models.Model):
 #     """ Product categories by brands """
 #     brand_name = models.CharField(max_length=100, blank=False, null=True)
