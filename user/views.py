@@ -25,8 +25,11 @@ class UserView(APIView):
         return Response({"status": "user not found please Signup first"},
                         status=status.HTTP_400_BAD_REQUEST)
 
+
+class UserRegistration(APIView):
+    """ user registration """
+
     def post(self, request):
-        print(request.data)
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -44,12 +47,10 @@ class UpdateUserDetail(APIView):
             serializer_data = UserSerializer(User.objects.get(email=request.user), data=request.data, partial=True)
         except Exception as e:
             return HttpResponse(e)
-        print(serializer_data)
         if serializer_data.is_valid():
             serializer_data.save()
             return Response({"status": "success", "data": serializer_data.data})
-        else:
-            return Response({"status": "error", "data": serializer_data.errors})
+        return Response({"status": "error", "data": serializer_data.errors})
 
 
 class AdminView(APIView):

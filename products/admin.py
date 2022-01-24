@@ -5,11 +5,24 @@ from .models import Products, Category, SubCategory, Seller, Collections, Featur
 
 # Register your models here
 
-admin.site.register(Collections)
+
 admin.site.register(SubCategory)
 admin.site.register(Seller)
 admin.site.register(Feature)
 admin.site.register(AvailableOffer)
+
+
+class CollectionsAdmin(admin.ModelAdmin):
+    """ product Collections interface configure"""
+    list_display = ['id', 'collection_name', 'photo_pre']
+    readonly_fields = ('photo_pre',)
+
+    def photo_pre(self, obj):
+        """ image view in admin panel"""
+        return format_html(f'<img style="height:100px;" src="/media/{obj.image}"/>')
+
+
+admin.site.register(Collections, CollectionsAdmin)
 
 
 class CategoryAdmin(admin.ModelAdmin):

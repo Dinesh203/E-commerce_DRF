@@ -51,7 +51,7 @@ class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         """ CollectionOfCategories serializer Meta class """
         model = Collections
-        fields = '__all__'
+        fields = ['id', 'collection_name', 'image']
 
 
 class CartSerializer(serializers.ModelSerializer):

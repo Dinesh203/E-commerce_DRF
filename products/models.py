@@ -9,7 +9,12 @@ COLOR_CHOICES = (
     ('SKY_BLUE', 'sky_blue'),
     ('BLACK', 'black'),
     ('SILVER', 'SILVER'),
-    ('GREEN', 'green')
+    ('GREEN', 'green'),
+    ('GOLDEN', 'golden'),
+    ('BRONZE', 'bronze'),
+    ('YELLOW', 'Yellow'),
+    ('PURPLE', 'Purple'),
+    ('PINK', 'Pink'),
 )
 
 

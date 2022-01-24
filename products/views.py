@@ -15,14 +15,22 @@ class CollectionsView(APIView):
     """list top deal products"""
 
     def get(self, request, pk=None):
+        category = Category.objects.filter(collections_id=pk)
+        for i in category:
+            products = Products.objects.filter(sub_category_id=i.id).order_by("?")[0:10]
         if pk:
-            collection = Collections.objects.get(pk=pk)
-            print(list(collection))
+            collection = Collections.objects.filter(pk=pk)
+            print("category", category)
             if not collection:
                 return Response({"status": "category not found"},
                                 status=status.HTTP_404_NOT_FOUND)
-            serializer = CollectionSerializer(collection)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            collection_serializer = CollectionSerializer(collection, many=True)
+            category_serializer = CategorySerializer(category, many=True)
+            products = ProductsSerializer(products, many=True)
+            context_with_id = {'collections': collection_serializer.data,
+                               'category': category_serializer.data,
+                               'products': products.data}
+            return Response(context_with_id, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:10]
         product_serializer = ProductsSerializer(top_deal, many=True)
 
@@ -74,19 +82,24 @@ class SubCategoryView(APIView):
 
     def get(self, request, pk=None):
         if pk:
-            products = Products.objects.filter(sub_category_id=pk)
+            sub_category = SubCategory.objects.filter(pk=pk)
+            products = Products.objects.filter(sub_category_id=pk).order_by("?")[0:10]
 
-            if not products:
+            if not sub_category:
                 return Response({"status": "product not available"},
                                 status=status.HTTP_404_NOT_FOUND)
-            serializer = ProductsSerializer(products, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            sub_category_serializer = SubCategorySerializer(sub_category, many=True)
+            products_serializer = ProductsSerializer(products, many=True)
+            context_with_id = {'sub_category': sub_category_serializer.data,
+                               'products': products_serializer.data}
+
+            return Response(context_with_id, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:10]
         product_serializer = ProductsSerializer(top_deal, many=True)
 
         cat_serializer = SubCategorySerializer(SubCategory.objects.all().order_by('id'), many=True)
-        context = {'products': product_serializer.data,
-                   'categories': cat_serializer.data
+        context = {'categories': cat_serializer.data,
+                   'products': product_serializer.data
                    }
         return Response(context, status=status.HTTP_200_OK)
 
@@ -110,7 +123,6 @@ class CartView(APIView):
     #     product = Products.objects.get(pk=pk)
     #     print(product.)
     #     serialiser = CartSerializer('User')
-
 
     # def post(self, request):
     #     print(request.data)

@@ -4,7 +4,7 @@ from django.urls import path
 
 urlpatterns = [
     path('', CollectionsView.as_view(), name='collections_detail'),
-    path('collections/<int:pk>', CollectionsView.as_view(), name='collections_by_id'),
+    path('<int:pk>', CollectionsView.as_view(), name='collections_by_id'),
     path('product_detail/', ProductDetail.as_view(), name='products_detail'),
     path('product_detail/<int:pk>', ProductDetail.as_view(), name='products_detail'),
     path('category/', CategoryView.as_view(), name='category_view'),
