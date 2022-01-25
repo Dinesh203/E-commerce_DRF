@@ -11,7 +11,7 @@ urlpatterns = [
     path('category/<int:pk>', CategoryView.as_view(), name='category_view_by_id'),
     path('subcategory/', SubCategoryView.as_view(), name='subcategory_view'),
     path('subcategory/<int:pk>', SubCategoryView.as_view(), name='subcategory_view_by_id'),
-    path('cart/', CartView.as_view(), name='cart view'),
-    path('cart/<int:pk>', CartView.as_view(), name='cart view')
+    path('cart/', AddToCartView.as_view(), name='cart_view'),
+    path('cart/<int:pk>', AddToCartView.as_view(), name='cart_view')
 
 ]

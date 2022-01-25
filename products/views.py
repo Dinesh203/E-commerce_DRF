@@ -1,8 +1,9 @@
-from .models import Products, Category, SubCategory, Collections, Cart
+from .models import Products, Category, SubCategory, Collections, Cart, User
 from .serializers import ProductsSerializer, CategorySerializer, \
     SubCategorySerializer, CollectionSerializer, CartSerializer
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -35,6 +36,11 @@ class CollectionsView(APIView):
         product_serializer = ProductsSerializer(top_deal, many=True)
 
         collect_serializer = CollectionSerializer(Collections.objects.all(), many=True)
+        # print(collect_serializer.photo_url)
+        collection = Collections.objects.all()
+        for i in collection:
+            print(i.image.url)
+            print("path", request.build_absolute_uri('/')[:-1] + i.image.url)
         context = {'collections': collect_serializer.data,
                    'products': product_serializer.data}
         return Response(context, status=status.HTTP_200_OK)
@@ -104,25 +110,45 @@ class SubCategoryView(APIView):
         return Response(context, status=status.HTTP_200_OK)
 
 
-class CartView(APIView):
+class AddToCartView(APIView):
     """add item to cart"""
-    serializer_class = CartSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk=None):
         """cart item get detail"""
-        print(request.auth)
-        print("absctrac", request.user.is_authenticated)
-        print(request.user.is_authenticated)
-        if request.user.is_authenticated:
-            print(request.user.is_authenticated)
-            cart = Cart.objects.filter(user__email=request.user)
-            cart_serializer = CartSerializer(cart, many=True)
+        if pk:
+            cart = Cart.objects.filter(pk=pk)
+            if not cart:
+                return Response({'error': 'product not available'}, status=status.HTTP_400_BAD_REQUEST)
+            cart = Cart.objects.get(pk=pk)
+            serializer = CartSerializer(cart, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        cart = Cart.objects.all()
+        serializer = CartSerializer(cart, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # def post(self, request, pk=None):
-    #     """add item in cart"""
-    #     product = Products.objects.get(pk=pk)
-    #     print(product.)
-    #     serialiser = CartSerializer('User')
+    def post(self, request, pk=None):
+        """add item in cart"""
+        products = Products.objects.get(pk=pk)
+        print("product_id", products.id)
+        user1 = User.objects.get(email=request.user)
+        print("user_id", user1.id)
+        serializer = CartSerializer(data={'user': user1.id, 'products': products.id})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'error': 'product is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        """delete cart item """
+        if pk:
+            cart = Cart.objects.filter(pk=pk)
+            if not cart:
+                return Response({'status': 'cart id not found'})
+            cart.delete()
+            return Response({"data": "item removed"}, status=status.HTTP_200_OK)
+        return Response({'error': 'cart id not found'})
+
 
     # def post(self, request):
     #     print(request.data)

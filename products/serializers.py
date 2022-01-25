@@ -47,20 +47,33 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 class CollectionSerializer(serializers.ModelSerializer):
     """ CollectionOfCategories serializer """
+    photo_url = serializers.SerializerMethodField()
 
     class Meta:
         """ CollectionOfCategories serializer Meta class """
         model = Collections
-        fields = ['id', 'collection_name', 'image']
+        fields = ['id', 'collection_name', 'photo_url']
+
+    def get_photo_url(self, car):
+        request = self.context.get('request')
+        collection = Collections.objects.all()
+        for i in collection:
+            print(i.image.url)
+            # print(request.data)
+            # print("path", request.build_absolute_uri('/')[:-1] + i.image.url)
+        print('seri_img_path', request.build_absolute_uri)
+        photo_url = request.build_absolute_uri('/')[:-1] + i.image.url
+        print('seri_img_path', photo_url)
+        return photo_url
 
 
 class CartSerializer(serializers.ModelSerializer):
     """ cart serializer """
-    user = serializers.StringRelatedField()
-    product = serializers.StringRelatedField()
+    # user = serializers.StringRelatedField()
+    # products = serializers.StringRelatedField()
 
     class Meta:
         """ cart serializer Meta class """
         model = Cart
-        fields = ['id', 'user', 'product', 'total_amount', 'quantity', 'added_date']
+        fields = ['id', 'user', 'products', 'total_amount', 'quantity']
 

@@ -117,7 +117,8 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_cart')
     products = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='cart_product')
     quantity = models.PositiveIntegerField(default=1)
-    total_amount = models.PositiveIntegerField(blank=True, null=True)
+    total_amount = models.DecimalField(decimal_places=2, blank=True,
+                                       null=True, max_digits=10)
 
     def __str__(self):
         return str(self.products)
