@@ -1,4 +1,6 @@
-from .models import User, Products, Category, SubCategory, Collections, Cart
+
+from .models import Products, Category, SubCategory, Collections,\
+    Cart, Address
 from rest_framework import serializers
 from django_countries.serializer_fields import CountryField
 
@@ -85,3 +87,13 @@ class CartSerializer(serializers.ModelSerializer):
         """ cart serializer Meta class """
         model = Cart
         fields = ['id', 'user', 'products', 'total_amount', 'quantity']
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    """ Address serializer model class
+    """
+    class Meta:
+        """ address serializer Meta class """
+        model = Address
+        fields = ['id', 'user', 'house_building_number', 'land_mark', 'village_city', 'district',
+                  'pin_code', 'state', 'country', 'full_address']

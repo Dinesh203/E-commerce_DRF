@@ -1,5 +1,8 @@
 from django.db import models
 from user.models import User
+from .choice import STATE_CHOICE
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django_countries.fields import CountryField
 
 # Create your models here.
 
@@ -122,6 +125,23 @@ class Cart(models.Model):
 
     def __str__(self):
         return str(self.products)
+
+
+class Address(models.Model):
+    """User's Address detail table"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='user')
+    house_building_number = models.CharField(blank=True, null=True, max_length=50)
+    land_mark = models.CharField(max_length=150, blank=False)
+    village_city = models.CharField(max_length=50, blank=True, null=True)
+    district = models.CharField(max_length=50, blank=True, null=True)
+    pin_code = models.PositiveIntegerField(validators=[MaxValueValidator(999999),
+                                                       MinValueValidator(10000)])
+    state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
+    country = CountryField(multiple=False, default="", blank=False)
+    full_address = models.CharField(max_length=250, blank=False, null=False)
+
+    def __str__(self):
+        return self.full_address
 
 # class Brand(models.Model):
 #     """ Product categories by brands """

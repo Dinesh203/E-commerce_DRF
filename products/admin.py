@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Products, Category, SubCategory, Seller, Collections, Feature, AvailableOffer, Cart
+from .models import Products, Category, SubCategory, Seller, Collections,\
+    Feature, AvailableOffer, Cart, Address
 
 # Register your models here
 
@@ -10,6 +11,7 @@ admin.site.register(SubCategory)
 admin.site.register(Seller)
 admin.site.register(Feature)
 admin.site.register(AvailableOffer)
+admin.site.register(Address)
 
 
 class CollectionsAdmin(admin.ModelAdmin):

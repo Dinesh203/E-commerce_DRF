@@ -1,11 +1,13 @@
-from .models import Products, Category, SubCategory, Collections, Cart, User
+from .models import Products, Category, SubCategory, Collections, \
+    Cart, User, Address
 from .serializers import ProductsSerializer, CategorySerializer, \
-    SubCategorySerializer, CollectionSerializer, CartSerializer
+    SubCategorySerializer, CollectionSerializer, CartSerializer, AddressSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
 
 
 # from .serializers import UserSerializer
@@ -66,7 +68,7 @@ class CategoryView(APIView):
             if not category:
                 return Response({"status": "category not found"},
                                 status=status.HTTP_404_NOT_FOUND)
-            serializer = CategorySerializer(category, context={"request": request},)
+            serializer = CategorySerializer(category, context={"request": request}, )
             return Response(serializer.data, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:20]
 
@@ -147,6 +149,46 @@ class AddToCartView(APIView):
             cart.delete()
             return Response({"data": "item removed"}, status=status.HTTP_200_OK)
         return Response({'error': 'cart id not found'})
+
+
+class AddressView(APIView):
+    """ user can create address , view, delete and update address """
+    # permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk=None):
+        """ get address detail"""
+        if pk:
+            address = Address.objects.filter(pk=pk)
+            if not address:
+                return Response({'error': 'address not available'}, status=status.HTTP_400_BAD_REQUEST)
+            address = Address.objects.get(pk=pk)
+            serializer = CartSerializer(address, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        address = Address.objects.all()
+        serializer = AddressSerializer(address, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """ create address"""
+        data = {}
+        user1 = User.objects.get(email=request.user)
+        data['user'] = user1.id
+        data.update(request.data)
+        serializer = AddressSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'error': 'address is not valid'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        """delete address """
+        if pk:
+            address = Address.objects.filter(pk=pk)
+            if not address:
+                return Response({'status': 'address not found'}, status=status.HTTP_404_NOT_FOUND)
+            address.delete()
+            return Response({"data": "address removed"}, status=status.HTTP_200_OK)
+        return Response({'error': 'address id not found'})
 
     # def post(self, request):
     #     print(request.data)

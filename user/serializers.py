@@ -1,5 +1,5 @@
 
-from .models import User, Address
+from .models import User
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from django_countries.serializer_fields import CountryField
@@ -41,10 +41,4 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class AddressSerializer(serializers.ModelSerializer):
-    """ Address serializer model class
-    """
-    class Meta:
-        """ address serializer Meta class """
-        model = Address
-        fields = ['id', 'house_building_number', 'village_city', 'pin_code', 'address']
+

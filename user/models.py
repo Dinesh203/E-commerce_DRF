@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django_countries.fields import CountryField
 from .manager import CustomUserManager
-from .choice import STATE_CHOICE
-from django.core.validators import MinValueValidator, MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
@@ -46,27 +43,10 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-
-class Address(models.Model):
-    """User's Address detail table"""
-    house_building_number = models.PositiveIntegerField(blank=True, null=True,
-                                                        validators=[MaxValueValidator(99999)])
-    village_city = models.CharField(max_length=50, blank=True)
-    pin_code = models.PositiveIntegerField(blank=True, null=True,
-                                           validators=[MaxValueValidator(999999),
-                                                       MinValueValidator(1)])
-    state = models.CharField(choices=STATE_CHOICE, max_length=255, null=True, blank=True)
-    country = CountryField(multiple=False, default="", null=True, blank=True)
-    address = models.CharField(max_length=15, blank=False, null=False)
-
-    def __str__(self):
-        return self.address
-
-
 # access phonenumber_field value:-
 # person = models.Person.objects.get(id = 25)
 # phoneNumber = person.phoneNumber.as_e164
 
- # contact = models.PositiveIntegerField(max_length=12, validators=[MaxValueValidator(9999999999),
-    #                                                                  MinValueValidator(100000000)],
-    #                                       blank=True, null=True)
+# contact = models.PositiveIntegerField(max_length=12, validators=[MaxValueValidator(9999999999),
+#                                                                  MinValueValidator(100000000)],
+#                                       blank=True, null=True)

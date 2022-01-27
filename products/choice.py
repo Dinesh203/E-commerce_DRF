@@ -1,3 +1,4 @@
+
 STATE_CHOICE = (("Andhra Pradesh", "Andhra Pradesh"),
                  ("Arunachal Pradesh ", "Arunachal Pradesh "),
                  ("Assam","Assam"),
