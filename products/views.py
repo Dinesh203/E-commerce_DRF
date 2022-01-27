@@ -33,14 +33,10 @@ class CollectionsView(APIView):
                                'products': products.data}
             return Response(context_with_id, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:10]
-        product_serializer = ProductsSerializer(top_deal, many=True)
+        product_serializer = ProductsSerializer(top_deal, context={"request": request}, many=True)
 
-        collect_serializer = CollectionSerializer(Collections.objects.all(), many=True)
-        # print(collect_serializer.photo_url)
-        collection = Collections.objects.all()
-        for i in collection:
-            print(i.image.url)
-            print("path", request.build_absolute_uri('/')[:-1] + i.image.url)
+        collect_serializer = CollectionSerializer(Collections.objects.all(),
+                                                  context={"request": request}, many=True)
         context = {'collections': collect_serializer.data,
                    'products': product_serializer.data}
         return Response(context, status=status.HTTP_200_OK)
@@ -57,7 +53,7 @@ class ProductDetail(APIView):
             serializer = ProductsSerializer(Products.objects.get(pk=pk))
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
         product = Products.objects.all().order_by('id')
-        serializer = ProductsSerializer(product, many=True)
+        serializer = ProductsSerializer(product, context={"request": request}, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -70,12 +66,13 @@ class CategoryView(APIView):
             if not category:
                 return Response({"status": "category not found"},
                                 status=status.HTTP_404_NOT_FOUND)
-            serializer = CategorySerializer(category)
+            serializer = CategorySerializer(category, context={"request": request},)
             return Response(serializer.data, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:20]
 
-        cat_serializer = CategorySerializer(Category.objects.all().order_by('id'), many=True)
-        product_serializer = ProductsSerializer(top_deal, many=True)
+        cat_serializer = CategorySerializer(Category.objects.all().order_by('id'),
+                                            context={"request": request}, many=True)
+        product_serializer = ProductsSerializer(top_deal, context={"request": request}, many=True)
         context = {'products': product_serializer.data,
                    'categories': cat_serializer.data
                    }
@@ -95,13 +92,13 @@ class SubCategoryView(APIView):
                 return Response({"status": "product not available"},
                                 status=status.HTTP_404_NOT_FOUND)
             sub_category_serializer = SubCategorySerializer(sub_category, many=True)
-            products_serializer = ProductsSerializer(products, many=True)
+            products_serializer = ProductsSerializer(products, context={"request": request}, many=True)
             context_with_id = {'sub_category': sub_category_serializer.data,
                                'products': products_serializer.data}
 
             return Response(context_with_id, status=status.HTTP_200_OK)
         top_deal = Products.objects.filter().order_by("?")[0:10]
-        product_serializer = ProductsSerializer(top_deal, many=True)
+        product_serializer = ProductsSerializer(top_deal, context={"request": request}, many=True)
 
         cat_serializer = SubCategorySerializer(SubCategory.objects.all().order_by('id'), many=True)
         context = {'categories': cat_serializer.data,
@@ -129,14 +126,16 @@ class AddToCartView(APIView):
 
     def post(self, request, pk=None):
         """add item in cart"""
-        products = Products.objects.get(pk=pk)
-        print("product_id", products.id)
-        user1 = User.objects.get(email=request.user)
-        print("user_id", user1.id)
-        serializer = CartSerializer(data={'user': user1.id, 'products': products.id})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if pk:
+            if Cart.objects.filter(pk=pk).exists():
+                return Response({'exist': 'product is already exist in cart'}, status=status.HTTP_400_BAD_REQUEST)
+            products = Products.objects.get(pk=pk)
+            user1 = User.objects.get(email=request.user)
+            print("user_id", user1.id)
+            serializer = CartSerializer(data={'user': user1.id, 'products': products.id})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'error': 'product is not valid'}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk=None):
@@ -144,11 +143,10 @@ class AddToCartView(APIView):
         if pk:
             cart = Cart.objects.filter(pk=pk)
             if not cart:
-                return Response({'status': 'cart id not found'})
+                return Response({'status': 'cart id not found'}, status=status.HTTP_404_NOT_FOUND)
             cart.delete()
             return Response({"data": "item removed"}, status=status.HTTP_200_OK)
         return Response({'error': 'cart id not found'})
-
 
     # def post(self, request):
     #     print(request.data)
